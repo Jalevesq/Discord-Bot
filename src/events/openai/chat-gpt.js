@@ -22,6 +22,7 @@ module.exports = {
       prevMessages.reverse();
 
       prevMessages.forEach((msg) => {
+        if (message.author.bot) return;
         if (!msg.content.startsWith('.')) return;
         if (msg.author.id !== message.author.id) return;
 
@@ -38,11 +39,35 @@ module.exports = {
       });
 
       // if len of result.data.choices[0] is than 1950 Caracter
-      if (result && result.data && result.data.choices && result.data.choices[0].message.content.length < 1950) {
-        message.reply(result.data.choices[0].message.content);
-      } else {
-        console.log('ERROR! Too many characters in response.');
-        message.reply('Error: The response is more than 1950 characters.');
+      const MAX_MESSAGE_LENGTH = 1950;
+      if (result && result.data && result.data.choices) {
+        const content = result.data.choices[0].message.content;
+      
+        if (content.length > MAX_MESSAGE_LENGTH && content.length < 4500) {
+            const content = result.data.choices[0].message.content;
+            const messages = [];
+            let start = 0;
+            while (start < content.length) {
+              let end = start + MAX_MESSAGE_LENGTH;
+              if (end < content.length) {
+                // Find the nearest whitespace character before maxLength
+                end = content.lastIndexOf(' ', end);
+              }
+              const messageContent = content.substring(start, end);
+              messages.push(messageContent);
+              start = end + 1;
+            }
+    
+            for (const messageContent of messages) {
+              message.reply(messageContent);
+            }
+        } else if (content.length < MAX_MESSAGE_LENGTH) {
+          await message.reply(content);
+        }
+        else
+        {
+            await message.reply("Response has too much character (more than 4500).")
+        }
       }
     } catch (error) {
       console.log(`ERR: ${error}`);
