@@ -1,4 +1,5 @@
 const { Events, ActivityType} = require('discord.js');
+require('dotenv/config')
 
 module.exports = {
 	name: Events.ClientReady,

@@ -2,7 +2,6 @@ require('dotenv/config')
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, IntentsBitField} = require('discord.js');
-// const { Configuration, OpenAIApi} = require('openai');
 
 
 const client = new Client({ 
@@ -15,8 +14,7 @@ const client = new Client({
 });
 
 client.commands = new Collection();
-client.commandArray = [];
-
+client.commandsArray = [];
 
 // Function listenner
 const functionFolders = fs.readdirSync('./src/functions');
@@ -28,6 +26,6 @@ for (const folder of functionFolders) {
 }
 
 client.handleEvents();
-// client.handleCommands();
+client.handleCommands();
 
 client.login(process.env.TOKEN);
